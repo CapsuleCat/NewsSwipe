@@ -1,0 +1,11 @@
+.posting-chips {
+  margin-bottom: 0.8rem;
+}
+
+.posting-chips__chip {
+  @extend .chip;
+
+  & + & {
+    margin-left: 5px;
+  }
+}

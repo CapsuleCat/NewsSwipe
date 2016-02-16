@@ -1,0 +1,8 @@
+@import "{poetic:materialize-scss}/sass/materialize.scss";
+
+body {
+  background-color: #2980B9;
+}
+
+@import "{}/lib/modules/postings/components/posting/posting";
+@import "{}/lib/modules/postings/components/posting-chips/posting-chips";

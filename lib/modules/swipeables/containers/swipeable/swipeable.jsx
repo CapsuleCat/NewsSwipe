@@ -9,6 +9,27 @@ const START_TRIGGER_OFFSET = 10;
 const END_TRIGGER_OFFSET   = 10 * START_TRIGGER_OFFSET;
 const FACTOR = 1.2;
 
+/**
+ * The Swipeable Container
+ *
+ * This container handles moving the
+ * inner Component around, following the
+ * user's swipe action. It will also fire
+ * onSwipeUp, onSwipeLeft, and onSwipeRight
+ * callbacks when the user flicks the
+ * Component, or the Component is outside
+ * of a threshold range.
+ *
+ * Usage:
+ *
+ * ```
+ * <SwipeableContainer
+ *     height={} width={} onSwipeRight={}
+ *     onSwipeLeft={} onSwipeUp={}>
+ *   <MyComponent>
+ * </SwipeableContainer>
+ * ```
+ */
 const SwipeableContainer = React.createClass({
   getInitialState() {
     return { x: 0, y: 0 }
@@ -118,6 +139,8 @@ const SwipeableContainer = React.createClass({
     }
 
     return {
+      height: this.props.height,
+      width: this.props.width,
       transform: 'translate(' + left + 'px, ' + top + 'px) scale(' + zoomFactor + ')'
     };
   },
