@@ -1,12 +1,18 @@
 import React from 'react';
 
-// TODO elevate to container and lazily load in
-// tag details (including an image for the tag)
+const PostingChipImage = ({ tag }) => {
+  if ( tag.image )
+    return <img src={tag.image} alt={tag.name} />;
+  else
+    return <span></span>;
+};
+
 const PostingChips = ({ tags = [] }) => (
   <div className="posting-chips">
     {tags.map((tag, i) => (
       <div className="posting-chips__chip" key={i}>
-        {tag}
+        <PostingChipImage tag={tag} />
+        {tag.name}
       </div>
     ))}
   </div>

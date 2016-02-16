@@ -12,7 +12,8 @@ const articles = [
     image: 'https://images.unsplash.com/photo-1447069387593-a5de0862481e?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&w=1080&fit=max&s=2b9eab49407436fcdf8c92b37d784425',
     tags: [
       'web dev',
-      'design'
+      'design',
+      'php'
     ]
   }} />,
   <Posting posting={{
