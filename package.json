@@ -30,11 +30,13 @@
   "dependencies": {
     "domready": "^1.0.8",
     "react": "0.14.x",
+    "react-addons-css-transition-group": "^0.14.7",
     "react-dom": "0.14.x",
     "react-komposer": "1.x.x",
     "react-mounter": "1.x.x",
     "react-simple-di": "1.x.x",
-    "react-swipeable": "^3.1.0"
+    "react-swipeable": "^3.1.0",
+    "react-timeout": "^0.16.0"
   },
   "private": true
 }

@@ -1,87 +1,86 @@
 import React from 'react';
+import ReactTimeout from 'react-timeout';
+import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
 import { SwipeableContainer } from '/lib/modules/swipeables/containers/swipeable/swipeable.jsx';
-import { NewsArticle } from '/lib/modules/news/components/news-article/news-article.jsx';
 
-const articles = [
-  {
-    name: 'a'
-  },
-  {
-    name: 'b'
-  }
-];
+const FillableContainer = ({getNextView}) => {
+  const Fillable = React.createClass({
+    getInitialState() {
+      return {
+        index: 0,
+        view: this.createSwipeable(getNextView(0)),
+        lastDirection: 'none'
+      }
+    },
 
-const FillableContainer = React.createClass({
-  getInitialState() {
-    return {
-      index: 0,
-      fillable: this.createSwipeable(articles[0]),
-      timeouts: []
+    createSwipeable(innerView) {
+      // Needs a date because React is dumb
+      return (
+        <SwipeableContainer
+            key={+new Date()}
+            onSwipeUp={this.onSwipeUp}
+            onSwipeRight={this.onSwipeRight}
+            onSwipeLeft={this.onSwipeLeft}>
+          {innerView}
+        </SwipeableContainer>
+      );
+    },
+
+    nextView() {
+      const { setTimeout } = this.props.reactTimeout;
+
+      setTimeout(function(index) {
+          let newIndex = index + 1;
+          this.setState({
+            view: this.createSwipeable(
+              getNextView(newIndex)
+            ),
+            index: newIndex
+          });
+        }.bind(this, this.state.index), 1000
+      );
+    },
+
+    onSwipeUp() {
+      this.nextView();
+
+      this.setState({
+        lastDirection: 'up'
+      });
+    },
+
+    onSwipeLeft() {
+      this.nextView();
+
+      this.setState({
+        lastDirection: 'left'
+      });
+    },
+
+    onSwipeRight() {
+      this.nextView();
+
+      this.setState({
+        lastDirection: 'right'
+      });
+    },
+
+    render() {
+      return (
+        <ReactCSSTransitionGroup
+            transitionName={"slide-" + this.state.lastDirection}
+            transitionEnterTimeout={0}
+            transitionLeaveTimeout={500}>
+          {this.state.view}
+        </ReactCSSTransitionGroup>
+      );
     }
-  },
+  });
 
-  createSwipeable(article) {
-    // Needs a date because React is dumb
-    return (
-      <SwipeableContainer
-          key={+new Date()}
-          onSwipeUp={this.onSwipeUp}
-          onSwipeRight={this.onSwipeRight}
-          onSwipeLeft={this.onSwipeLeft}>
-        <NewsArticle article={article} />
-      </SwipeableContainer>
-    );
-  },
+  const FillableWithTimeout = ReactTimeout(Fillable);
 
-  // TODO clean this up
-  nextArticle() {
-    let timeouts = this.state.timeouts;
-
-    timeouts.push(
-      window.setTimeout(function() {
-        let newFillables = this.state.fillables;
-        this.setState({
-          fillable: this.createSwipeable(
-            articles[this.state.index + 1]
-          ),
-          index: this.state.index + 1
-        });
-      }.bind(this), 1000)
-    );
-
-    this.setState({
-      timeouts: timeouts
-    }); 
-  },
-
-  // TODO use a timeout mixin
-  componentWillUnmount() {
-    this.state.timeouts.forEach((timeout) => {
-      window.clearTimeout(timeout);
-    }); 
-  },
-
-  onSwipeUp() {
-    this.nextArticle();
-  },
-
-  onSwipeLeft() {
-    this.nextArticle();
-  },
-
-  onSwipeRight() {
-    this.nextArticle();
-  },
-
-  // TODO wrap in a react transition element
-  render() {
-    return (
-      <div className="fillable-container">
-        {this.state.fillable}
-      </div>
-    );
-  }
-});
+  return <FillableWithTimeout />;
+};
 
 export { FillableContainer };

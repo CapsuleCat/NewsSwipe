@@ -12,3 +12,52 @@ article {
   height: 100vh;
   width: 100vw;
 }
+
+/*
+ |--------------------------------------------
+ | Slide Transitions
+ |--------------------------------------------
+ */
+/* Up */
+.slide-up-enter {
+  transform: translateY(100%);
+
+  transition: transform 500ms ease-in;
+}
+
+.slide-up-enter.slide-up-enter-active {
+  transform: translateY(0%);
+}
+
+/* Down */
+.slide-down-enter {
+  transform: translateY(-100%);
+
+  transition: transform 500ms ease-in;
+}
+
+.slide-down-enter.slide-down-enter-active {
+  transform: translateY(0%);
+}
+
+/* Left */
+.slide-left-enter {
+  transform: translateX(100%);
+
+  transition: transform 500ms ease-in;
+}
+
+.slide-left-enter.slide-left-enter-active {
+  transform: translateX(0%);
+}
+
+/* Right */
+.slide-right-enter {
+  transform: translateX(-100%);
+
+  transition: transform 500ms ease-in;
+}
+
+.slide-right-enter.slide-right-enter-active {
+  transform: translateX(0%);
+}

@@ -6,15 +6,12 @@ import Swipeable from 'react-swipeable';
 // React Swipeable, but this is here so we can
 // tinker with that offset
 const START_TRIGGER_OFFSET = 10;
-const END_TRIGGER_OFFSET = 10 * START_TRIGGER_OFFSET;
+const END_TRIGGER_OFFSET   = 10 * START_TRIGGER_OFFSET;
 const FACTOR = 1.2;
 
 const SwipeableContainer = React.createClass({
   getInitialState() {
-    return {
-      x: 0,
-      y: 0
-    }
+    return { x: 0, y: 0 }
   },
 
   getDefaultProps() {
@@ -48,39 +45,6 @@ const SwipeableContainer = React.createClass({
     });
   },
 
-  onSwiped(_, deltaX, deltaY, isFlick) {
-    // Delta Y is positive/up and negative/down
-    // Delta X is positive/left and negative/right
-
-    if (deltaY > END_TRIGGER_OFFSET ) {
-      this.setState({
-        y: -this.props.width * 1.5
-      });
-
-      this.props.onSwipeUp();
-    } else if (deltaX > END_TRIGGER_OFFSET) {
-      this.setState({
-        x: -this.props.height * 1.5
-      });
-
-      this.props.onSwipeLeft();
-    } else if (deltaX < -END_TRIGGER_OFFSET ) {
-      this.setState({
-        x: this.props.height * 1.5
-      });
-
-      this.props.onSwipeRight();
-    } else if (isFlick) {
-      // TODO Determine flick direction
-    } else {
-      // reset
-      this.setState({
-        x: 0,
-        y: 0
-      });
-    }
-  },
-
   onSwipingLeft(_, deltaX) {
     this.setState({
       x: -deltaX * FACTOR
@@ -93,23 +57,63 @@ const SwipeableContainer = React.createClass({
     });
   },
 
+  onSwiped(_, deltaX, deltaY, isFlick) {
+    // Delta Y is positive/up and negative/down
+    // Delta X is positive/left and negative/right
+    const offscreenHeight = this.props.height * 1.5;
+    const offscreenWidth  = this.props.width * 1.5;
+
+    if (deltaY > END_TRIGGER_OFFSET ) {
+      this.setState({ y: -offscreenHeight });
+      this.props.onSwipeUp();
+    }
+    else if (deltaX > END_TRIGGER_OFFSET) {
+      this.setState({ x: -offscreenWidth });
+      this.props.onSwipeLeft();
+    }
+    else if (deltaX < -END_TRIGGER_OFFSET ) {
+      this.setState({ x: offscreenWidth });
+      this.props.onSwipeRight();
+    }
+    else if (isFlick) {
+      // TODO Determine flick direction
+    } else {
+      // reset
+      this.setState({ x: 0, y: 0 });
+    }
+  },
+
   getStyles() {
     let zoomFactor = 1;
-    if ( Math.abs( this.state.x ) >= Math.abs( this.state.y ) && 
-         Math.abs( this.state.x ) < START_TRIGGER_OFFSET * 2 ) {
-      zoomFactor = - 0.2 * Math.abs( this.state.x ) / (START_TRIGGER_OFFSET * 2) + 1;
-    } else if ( Math.abs( this.state.y ) >= Math.abs( this.state.x ) &&
-                Math.abs( this.state.y ) < START_TRIGGER_OFFSET * 2 ) {
-      zoomFactor = - 0.2 * Math.abs( this.state.y ) / (START_TRIGGER_OFFSET * 2) + 1;
+    let top = 0;
+    let left = 0;
+
+    const majorDirection = (check, other) => {
+      return Math.abs( check ) >= Math.abs( other );
+    };
+
+    const minorDirection = (check, other) => {
+      return majorDirection(check, other) && 
+             Math.abs( check ) < START_TRIGGER_OFFSET * 4;
+    };
+
+    const minorFactor = (check) => {
+      return - 0.2 * Math.abs( this.state.x ) / (START_TRIGGER_OFFSET * 4) + 1;
+    };
+    
+    // Determine zoom factor
+    if ( minorDirection( this.state.x, this.state.y ) ) {
+      zoomFactor = minorFactor( this.state.x );
+    } else if ( minorDirection( this.state.y, this.state.x ) ) {
+      zoomFactor = minorFactor( this.state.y );
     } else {
       zoomFactor = 0.8;
     }
 
-    let top = 0;
-    let left = 0;
-    if ( Math.abs( this.state.x ) > START_TRIGGER_OFFSET ) {
+    // Determine offset
+    if ( majorDirection(this.state.x, this.state.y) ) {
       left = 2 * this.state.x;
-    } else if ( Math.abs( this.state.y ) > START_TRIGGER_OFFSET ) {
+    } else {
       top = 2 * this.state.y;
     }
 
