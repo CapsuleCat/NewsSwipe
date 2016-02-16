@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactTimeout from 'react-timeout';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
 /**
@@ -19,84 +18,56 @@ import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
  * <AnimateContainer getNextSwipeable={myFunction} />
  * ```
  */
-const AnimateContainer = ({getNextSwipeable}) => {
-  const Animated = React.createClass({
-    getInitialState() {
-      return {
-        index: 0,
-        view: getNextSwipeable(0, {
-          onSwipeUp: this.onSwipeUp,
-          onSwipeRight: this.onSwipeRight,
-          onSwipeLeft: this.onSwipeLeft
-        }),
-        lastDirection: 'none'
-      }
-    },
-
-    nextViewTimeout(getNextSwipable, index, swipes) {
-      let newIndex = index + 1;
-
-      this.setState({
-        view: getNextSwipeable(newIndex, swipes),
-        index: newIndex
-      });
-    },
-
-    nextView() {
-      const { setTimeout } = this.props.reactTimeout;
-      const callback = this.nextViewTimeout.bind(
-        this,
-        getNextSwipeable,
-        this.state.index,
-        {
-          onSwipeUp: this.onSwipeUp,
-          onSwipeRight: this.onSwipeRight,
-          onSwipeLeft: this.onSwipeLeft
-        }
-      );
-
-      setTimeout(callback, 1000);
-    },
-
-    onSwipeUp() {
-      this.nextView();
-
-      this.setState({
-        lastDirection: 'up'
-      });
-    },
-
-    onSwipeLeft() {
-      this.nextView();
-
-      this.setState({
-        lastDirection: 'left'
-      });
-    },
-
-    onSwipeRight() {
-      this.nextView();
-
-      this.setState({
-        lastDirection: 'right'
-      });
-    },
-
-    render() {
-      return (
-        <ReactCSSTransitionGroup
-            transitionName={"slide-" + this.state.lastDirection}
-            transitionEnterTimeout={0}
-            transitionLeaveTimeout={500}>
-          {this.state.view}
-        </ReactCSSTransitionGroup>
-      );
+const AnimateContainer = React.createClass({
+  getInitialState() {
+    return {
+      lastDirection: 'none'
     }
-  });
+  },
 
-  const AnimatedTimeout = ReactTimeout(Animated);
+  onSwipeUp() {
+    this.setState({
+      lastDirection: 'up'
+    });
 
-  return <AnimatedTimeout />
-};
+    this.props.onSwipeUp();
+  },
+
+  onSwipeLeft() {
+    this.setState({
+      lastDirection: 'left'
+    });
+
+    this.props.onSwipeLeft();
+  },
+
+  onSwipeRight() {
+    this.setState({
+      lastDirection: 'right'
+    });
+
+    this.props.onSwipeRight();
+  },
+
+  render() {
+    const childrenWithProps = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, {
+        ...(child.props),
+        onSwipeRight: this.onSwipeRight,
+        onSwipeLeft: this.onSwipeLeft,
+        onSwipeUp: this.onSwipeUp
+      });
+    });
+
+    return (
+      <ReactCSSTransitionGroup
+          transitionName={"slide-" + this.state.lastDirection}
+          transitionEnterTimeout={0}
+          transitionLeaveTimeout={500}>
+        {childrenWithProps}
+      </ReactCSSTransitionGroup>
+    );
+  }
+});
 
 export { AnimateContainer };

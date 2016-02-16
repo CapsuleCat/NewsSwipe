@@ -15,9 +15,6 @@ const TagMapperContainer = React.createClass({
     let tags = this.props.tags;
     let foundTags = [];
 
-    console.log( 'test' );
-    console.log( tags );
-
     if ( handle.ready() ) {
       foundTags = Tags.find({
         name: {
@@ -39,9 +36,6 @@ const TagMapperContainer = React.createClass({
         };
       }
     });
-
-    console.log( foundTags );
-    console.log( tags );
 
     return {
       tags: tags
