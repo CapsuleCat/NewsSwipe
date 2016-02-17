@@ -1,17 +1,30 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, Route, browserHistory } from 'react-router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { ReactLayout } from '/lib/router/react-layout.jsx';
 
 import { AppPostings } from '/lib/modules/app/containers/postings/postings.jsx';
 
-const AppRouter = () => (
-  <Router history={browserHistory}>
-    <Route path="/" component={AppPostings}>
-      <Route path="postings" component={AppPostings}>
-        <Route path="/posting/:id" component={AppPostings} />
-      </Route>
-    </Route>
-  </Router>
-);
+const MainLayout = ({content}) => {
+  return (
+    <div>
+      {content}
+    </div>
+  );
+}
 
-export { AppRouter };
+FlowRouter.route('/', {
+  action: function(params, queryParams) {
+    ReactLayout.render(MainLayout, {
+      content: <AppPostings params={{id: 0}}/>
+    });
+  }
+});
+
+FlowRouter.route('/posting/:id', {
+  action: function(params, queryParams) {
+    ReactLayout.render(MainLayout, {
+      content: <AppPostings params={params}/>
+    });
+  }
+});

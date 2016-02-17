@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactTimeout from 'react-timeout';
 
+import { FlowRouter } from 'meteor/kadira:flow-router';
+
 import { Posting } from '/lib/modules/postings/components/posting/posting.jsx';
 import { AnimateContainer } from '/lib/modules/swipeables/containers/animate/animate.jsx';
 import { SwipeableContainer } from '/lib/modules/swipeables/containers/swipeable/swipeable.jsx';
-import { browserHistory } from 'react-router'
 
 const postings = [
   {
@@ -41,15 +42,18 @@ var AppPostings = React.createClass({
     });
   },
 
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      posting: postings[newProps.params.id || 0],
+      timestamp: +new Date()
+    });
+  },
+
   postSwipeCallback() {
     const { setTimeout } = this.props.reactTimeout;
 
     setTimeout(function () {
-      this.setState({
-        posting: postings[1],
-        timestamp: +new Date()
-      });
-      browserHistory.push('/posting/' + 1);
+      FlowRouter.go('/posting/' + 1);
     }.bind(this), 1000);
   },
 
